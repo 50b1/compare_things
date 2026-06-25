@@ -1,6 +1,6 @@
 # Things Comparison
 
-A pairwise comparison tool that ranks items based on 1-vs-1 choices, with a predefined Taskmaster UK ranking mode and community rankings.
+A pairwise comparison tool that ranks items based on 1-vs-1 choices, with a predefined Taskmaster UK series ranking mode and community rankings.
 
 ## How to Run
 
@@ -16,17 +16,22 @@ A pairwise comparison tool that ranks items based on 1-vs-1 choices, with a pred
 ## Sections
 
 ### Taskmaster UK
-- Select series subsets (Main Series 1-21, Champion of Champions, New Year's Treat)
-- Rank contestants from selected series via pairwise comparison
-- Save your ranking to the community database
+- Select which series to include (Main Series 1-21, Champion of Champions 1-4, New Year's Treat 1-6)
+- Rank the selected **series** against each other via pairwise comparison
+- Each VS card shows the series name, year, and contestants (winner highlighted)
+- Rankings are automatically saved after completion
+- Enter a username before ranking to identify your submission
 
 ### Custom Compare
-- Add items as text or images
+- Add items as text or images (single file or entire folder)
 - Compare them 1 vs 1, get a ranked list
+- Supports skip (tie) and undo
 
 ### Community Rankings
 - View aggregated rankings from all users
-- See average ELO scores across all submissions
+- Filter by category: All (combined), Main Series, Champion of Champions, New Year's Treat
+- "All" shows a single combined ranking across all submissions
+- Category filters group rankings by the exact subset that was ranked
 
 ## Supabase Setup
 
@@ -49,12 +54,14 @@ A pairwise comparison tool that ranks items based on 1-vs-1 choices, with a pred
 
 3. Edit `js/supabase.js` and replace `SUPABASE_URL` and `SUPABASE_ANON_KEY` with your credentials.
 
-Without Supabase configured, rankings are stored in localStorage as a fallback.
+Without Supabase configured, rankings are stored in localStorage. When Supabase is later configured, locally stored rankings are automatically synced to the database on next page load.
 
-## Adding Contestant Images
+## Adding Series Images
 
-Place images in `images/contestants/` named by contestant ID, e.g.:
-- `images/contestants/s01_frank_skinner.jpg`
-- `images/contestants/s05_bob_mortimer.jpg`
+Place images in `images/series/` named by series ID, e.g.:
+- `images/series/s01.jpg`
+- `images/series/s05.jpg`
+- `images/series/coc1.jpg`
+- `images/series/nyt3.jpg`
 
-The app shows initials as avatars when images aren't available.
+The app gracefully hides the image element when no file is found.
