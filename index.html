@@ -4,377 +4,140 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Things Comparison</title>
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    :root {
-      --bg: #0f1117;
-      --surface: #1a1d27;
-      --surface2: #242836;
-      --border: #2e3345;
-      --text: #e4e6f0;
-      --text-dim: #8b8fa3;
-      --accent: #6c63ff;
-      --accent-hover: #5a52e0;
-      --green: #34d399;
-      --red: #f87171;
-      --gold: #fbbf24;
-      --silver: #94a3b8;
-      --bronze: #d97706;
-      --radius: 12px;
-    }
-
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    header {
-      text-align: center;
-      padding: 2.5rem 1rem 1rem;
-    }
-    header h1 { font-size: 2rem; font-weight: 700; letter-spacing: -0.5px; }
-    header p { color: var(--text-dim); margin-top: 0.4rem; font-size: 0.95rem; }
-
-    .container {
-      width: 100%;
-      max-width: 780px;
-      padding: 0 1.25rem 3rem;
-    }
-
-    /* ---------- phase: setup ---------- */
-    #setup-phase .add-row {
-      display: flex;
-      gap: 0.5rem;
-      margin-bottom: 1rem;
-    }
-    #setup-phase input[type="text"] {
-      flex: 1;
-      padding: 0.7rem 1rem;
-      border-radius: var(--radius);
-      border: 1px solid var(--border);
-      background: var(--surface);
-      color: var(--text);
-      font-size: 0.95rem;
-      outline: none;
-      transition: border-color 0.2s;
-    }
-    #setup-phase input[type="text"]:focus { border-color: var(--accent); }
-
-    .btn {
-      padding: 0.7rem 1.3rem;
-      border: none;
-      border-radius: var(--radius);
-      font-size: 0.95rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background 0.2s, transform 0.1s;
-      color: #fff;
-    }
-    .btn:active { transform: scale(0.97); }
-    .btn-accent { background: var(--accent); }
-    .btn-accent:hover { background: var(--accent-hover); }
-    .btn-secondary {
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      color: var(--text);
-    }
-    .btn-secondary:hover { background: var(--border); }
-    .btn-danger { background: var(--red); }
-    .btn-danger:hover { background: #ef4444; }
-    .btn:disabled { opacity: 0.4; cursor: not-allowed; }
-
-    .or-divider {
-      text-align: center;
-      color: var(--text-dim);
-      font-size: 0.85rem;
-      margin-bottom: 1rem;
-    }
-
-    .file-label {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-      padding: 0.7rem 1.3rem;
-      border-radius: var(--radius);
-      background: var(--surface2);
-      border: 1px dashed var(--border);
-      color: var(--text-dim);
-      cursor: pointer;
-      font-size: 0.9rem;
-      transition: border-color 0.2s;
-      margin-bottom: 1.5rem;
-    }
-    .file-label:hover { border-color: var(--accent); color: var(--text); }
-    .file-label input { display: none; }
-
-    .items-list {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.6rem;
-      margin-bottom: 1.5rem;
-      min-height: 40px;
-    }
-
-    .item-chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-radius: 999px;
-      padding: 0.35rem 0.6rem 0.35rem 0.75rem;
-      font-size: 0.88rem;
-      max-width: 220px;
-      animation: fadeIn 0.2s ease;
-    }
-    .item-chip img {
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      object-fit: cover;
-    }
-    .item-chip span {
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-    .item-chip button {
-      background: none;
-      border: none;
-      color: var(--text-dim);
-      cursor: pointer;
-      font-size: 1.1rem;
-      line-height: 1;
-      padding: 0 0.2rem;
-    }
-    .item-chip button:hover { color: var(--red); }
-
-    .start-row {
-      display: flex;
-      justify-content: center;
-      gap: 0.75rem;
-    }
-
-    /* ---------- phase: compare ---------- */
-    #compare-phase { display: none; }
-
-    .progress-bar-wrap {
-      background: var(--surface);
-      border-radius: 999px;
-      height: 8px;
-      margin-bottom: 0.5rem;
-      overflow: hidden;
-    }
-    .progress-bar-fill {
-      height: 100%;
-      background: var(--accent);
-      border-radius: 999px;
-      transition: width 0.35s ease;
-    }
-    .progress-text {
-      text-align: center;
-      font-size: 0.85rem;
-      color: var(--text-dim);
-      margin-bottom: 1.5rem;
-    }
-
-    .vs-container {
-      display: flex;
-      gap: 1.5rem;
-      align-items: stretch;
-      margin-bottom: 1.5rem;
-    }
-
-    .vs-card {
-      flex: 1;
-      background: var(--surface);
-      border: 2px solid var(--border);
-      border-radius: var(--radius);
-      padding: 2rem 1.5rem;
-      text-align: center;
-      cursor: pointer;
-      transition: border-color 0.2s, transform 0.15s, box-shadow 0.2s;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 320px;
-    }
-    .vs-card:hover {
-      border-color: var(--accent);
-      transform: translateY(-3px);
-      box-shadow: 0 8px 24px rgba(108, 99, 255, 0.15);
-    }
-    .vs-card img {
-      max-width: 100%;
-      max-height: 400px;
-      border-radius: 8px;
-      object-fit: contain;
-      margin-bottom: 0.75rem;
-    }
-    .vs-card .label {
-      font-size: 1.15rem;
-      font-weight: 600;
-      word-break: break-word;
-    }
-
-    .vs-badge {
-      font-size: 1.6rem;
-      font-weight: 800;
-      color: var(--text-dim);
-      align-self: center;
-      flex-shrink: 0;
-      user-select: none;
-    }
-
-    .skip-row {
-      display: flex;
-      justify-content: center;
-      gap: 0.75rem;
-    }
-
-    /* ---------- phase: results ---------- */
-    #results-phase { display: none; }
-
-    .results-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-bottom: 1.5rem;
-    }
-    .results-table th {
-      text-align: left;
-      padding: 0.6rem 0.8rem;
-      font-size: 0.8rem;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      color: var(--text-dim);
-      border-bottom: 1px solid var(--border);
-    }
-    .results-table td {
-      padding: 0.75rem 0.8rem;
-      border-bottom: 1px solid var(--border);
-      vertical-align: middle;
-    }
-    .results-table tr:last-child td { border-bottom: none; }
-
-    .rank-badge {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 30px;
-      height: 30px;
-      border-radius: 50%;
-      font-weight: 700;
-      font-size: 0.85rem;
-    }
-    .rank-1 { background: var(--gold); color: #1a1d27; }
-    .rank-2 { background: var(--silver); color: #1a1d27; }
-    .rank-3 { background: var(--bronze); color: #fff; }
-    .rank-other { background: var(--surface2); color: var(--text-dim); }
-
-    .item-cell {
-      display: flex;
-      align-items: center;
-      gap: 0.65rem;
-    }
-    .item-cell img {
-      width: 36px;
-      height: 36px;
-      border-radius: 6px;
-      object-fit: cover;
-    }
-
-    .score-bar-wrap {
-      background: var(--surface);
-      border-radius: 999px;
-      height: 6px;
-      width: 100%;
-      max-width: 120px;
-    }
-    .score-bar-fill {
-      height: 100%;
-      background: var(--accent);
-      border-radius: 999px;
-    }
-
-    .restart-row {
-      display: flex;
-      justify-content: center;
-      gap: 0.75rem;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: scale(0.92); }
-      to { opacity: 1; transform: scale(1); }
-    }
-
-    @media (max-width: 520px) {
-      .vs-container { flex-direction: column; gap: 0.75rem; }
-      .vs-badge { transform: rotate(90deg); }
-    }
-  </style>
+  <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-  <header>
-    <h1>Things Comparison</h1>
-    <p>Add items, compare them 1 vs 1, get a ranked list</p>
-  </header>
 
-  <div class="container">
+  <!-- NAV -->
+  <nav class="top-nav">
+    <span class="logo">Things Comparison</span>
+    <button class="nav-btn active" data-section="taskmaster-section">Taskmaster UK</button>
+    <button class="nav-btn" data-section="custom-section">Custom Compare</button>
+    <button class="nav-btn" data-section="community-section">Community Rankings</button>
+    <span style="margin-left:auto;display:flex;align-items:center;gap:0.5rem;">
+      <span id="current-user-display" style="font-size:0.85rem;color:var(--text-dim);"></span>
+      <button class="btn btn-sm btn-secondary" id="change-user-btn">Change User</button>
+    </span>
+  </nav>
 
-    <!-- SETUP -->
-    <div id="setup-phase">
+  <!-- USERNAME MODAL -->
+  <div class="modal-overlay" id="username-modal">
+    <div class="modal">
+      <h2>Enter Your Name</h2>
+      <p style="color:var(--text-dim);margin-bottom:1rem;font-size:0.9rem;">This will be shown alongside your rankings.</p>
+      <input type="text" id="username-input" placeholder="Your name..." maxlength="30">
+      <button class="btn btn-accent" id="username-submit" style="width:100%;">Continue</button>
+    </div>
+  </div>
+
+  <!-- ============ TASKMASTER SECTION ============ -->
+  <div class="section active" id="taskmaster-section">
+    <div class="section-header">
+      <h1>Taskmaster UK Ranking</h1>
+      <p>Select which series to include, then rank them 1 vs 1</p>
+    </div>
+
+    <!-- Selection Phase -->
+    <div id="tm-selection">
+      <div class="subset-selector" id="tm-subset-selector"></div>
+      <p id="tm-contestant-count" style="text-align:center;color:var(--text-dim);margin-bottom:0.75rem;">0 series selected</p>
+      <div class="contestant-preview" id="tm-contestant-preview" style="display:none;"></div>
+      <div class="start-row">
+        <button class="btn btn-accent" id="tm-start-btn" disabled>Start Ranking</button>
+      </div>
+    </div>
+
+    <!-- Compare Phase -->
+    <div id="tm-compare" style="display:none;">
+      <div class="progress-bar-wrap">
+        <div class="progress-bar-fill" id="tm-progress-fill" style="width:0%"></div>
+      </div>
+      <div class="progress-text" id="tm-progress-text">0 / 0</div>
+
+      <div class="vs-container">
+        <div class="vs-card" id="tm-card-a"></div>
+        <div class="vs-badge">VS</div>
+        <div class="vs-card" id="tm-card-b"></div>
+      </div>
+
+      <div class="skip-row">
+        <button class="btn btn-secondary" id="tm-skip-btn">Skip (tie)</button>
+        <button class="btn btn-secondary" id="tm-undo-btn" disabled>Undo</button>
+      </div>
+    </div>
+
+    <!-- Results Phase -->
+    <div id="tm-results" style="display:none;">
+      <h2 style="margin-bottom:1rem;text-align:center;">Your Taskmaster Ranking</h2>
+      <table class="results-table">
+        <thead>
+          <tr>
+            <th style="width:50px">Rank</th>
+            <th>Series</th>
+            <th style="width:60px">Wins</th>
+            <th style="width:140px">Score</th>
+          </tr>
+        </thead>
+        <tbody id="tm-results-body"></tbody>
+      </table>
+      <div class="restart-row">
+        <button class="btn btn-secondary" id="tm-back-btn">Back to Selection</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ CUSTOM COMPARE SECTION ============ -->
+  <div class="section" id="custom-section">
+    <div class="section-header">
+      <h1>Custom Compare</h1>
+      <p>Add items, compare them 1 vs 1, get a ranked list</p>
+    </div>
+
+    <!-- Setup Phase -->
+    <div id="cc-setup">
       <div class="add-row">
-        <input type="text" id="text-input" placeholder="Enter item name…" />
-        <button class="btn btn-accent" id="add-text-btn">Add</button>
+        <input type="text" id="cc-text-input" placeholder="Enter item name…" />
+        <button class="btn btn-accent" id="cc-add-text-btn">Add</button>
       </div>
       <div class="or-divider">— or add an image —</div>
       <label class="file-label">
         📷 Choose image
-        <input type="file" id="image-input" accept="image/*" />
+        <input type="file" id="cc-image-input" accept="image/*" />
       </label>
       <div class="or-divider">— or add a folder of images —</div>
       <label class="file-label">
         📁 Choose folder
-        <input type="file" id="folder-input" webkitdirectory accept="image/*" />
+        <input type="file" id="cc-folder-input" webkitdirectory accept="image/*" />
       </label>
-
-      <div class="items-list" id="items-list"></div>
-
+      <div class="items-list" id="cc-items-list"></div>
       <div class="start-row">
-        <button class="btn btn-accent" id="start-btn" disabled>Start Comparing</button>
+        <button class="btn btn-accent" id="cc-start-btn" disabled>Start Comparing</button>
       </div>
     </div>
 
-    <!-- COMPARE -->
-    <div id="compare-phase">
+    <!-- Compare Phase -->
+    <div id="cc-compare" style="display:none;">
       <div class="progress-bar-wrap">
-        <div class="progress-bar-fill" id="progress-fill" style="width:0%"></div>
+        <div class="progress-bar-fill" id="cc-progress-fill" style="width:0%"></div>
       </div>
-      <div class="progress-text" id="progress-text">0 / 0</div>
+      <div class="progress-text" id="cc-progress-text">0 / 0</div>
 
       <div class="vs-container">
-        <div class="vs-card" id="card-a"></div>
+        <div class="vs-card" id="cc-card-a"></div>
         <div class="vs-badge">VS</div>
-        <div class="vs-card" id="card-b"></div>
+        <div class="vs-card" id="cc-card-b"></div>
       </div>
 
       <div class="skip-row">
-        <button class="btn btn-secondary" id="skip-btn">Skip (tie)</button>
-        <button class="btn btn-secondary" id="undo-btn" disabled>Undo</button>
+        <button class="btn btn-secondary" id="cc-skip-btn">Skip (tie)</button>
+        <button class="btn btn-secondary" id="cc-undo-btn" disabled>Undo</button>
       </div>
     </div>
 
-    <!-- RESULTS -->
-    <div id="results-phase">
-      <h2 style="margin-bottom:1rem; text-align:center;">Final Ranking</h2>
-      <table class="results-table" id="results-table">
+    <!-- Results Phase -->
+    <div id="cc-results" style="display:none;">
+      <h2 style="margin-bottom:1rem;text-align:center;">Final Ranking</h2>
+      <table class="results-table">
         <thead>
           <tr>
             <th style="width:50px">Rank</th>
@@ -383,319 +146,36 @@
             <th style="width:140px">Score</th>
           </tr>
         </thead>
-        <tbody id="results-body"></tbody>
+        <tbody id="cc-results-body"></tbody>
       </table>
-
       <div class="restart-row">
-        <button class="btn btn-accent" id="restart-btn">Start Over</button>
-        <button class="btn btn-secondary" id="redo-btn">Re-compare</button>
+        <button class="btn btn-accent" id="cc-restart-btn">Start Over</button>
+        <button class="btn btn-secondary" id="cc-redo-btn">Re-compare</button>
       </div>
     </div>
-
   </div>
 
-  <script>
-    const items = [];       // { id, type:'text'|'image', value:string, name:string }
-    let pairs = [];         // [ [idxA, idxB], … ]
-    let currentPair = 0;
-    const history = [];     // for undo: { pair, winner: idx|null }
-    let wins = {};          // id -> win count
-    let elo = {};           // id -> elo score
+  <!-- ============ COMMUNITY SECTION ============ -->
+  <div class="section" id="community-section">
+    <div class="section-header">
+      <h1>Community Rankings</h1>
+      <p>Combined rankings from all users</p>
+    </div>
+    <div class="community-filters" id="community-filters">
+      <button class="btn btn-sm btn-accent community-filter-btn active" data-filter="all">All</button>
+      <button class="btn btn-sm btn-secondary community-filter-btn" data-filter="main_series">Main Series</button>
+      <button class="btn btn-sm btn-secondary community-filter-btn" data-filter="champion_of_champions">Champion of Champions</button>
+      <button class="btn btn-sm btn-secondary community-filter-btn" data-filter="new_years_treat">New Year's Treat</button>
+    </div>
+    <div id="community-content">
+      <div class="loading-msg">Select a category to view aggregated results.</div>
+    </div>
+  </div>
 
-    const K = 32;
-    const START_ELO = 1000;
-
-    // DOM refs
-    const setupPhase   = document.getElementById('setup-phase');
-    const comparePhase = document.getElementById('compare-phase');
-    const resultsPhase = document.getElementById('results-phase');
-    const textInput    = document.getElementById('text-input');
-    const addTextBtn   = document.getElementById('add-text-btn');
-    const imageInput   = document.getElementById('image-input');
-    const folderInput  = document.getElementById('folder-input');
-    const itemsList    = document.getElementById('items-list');
-    const startBtn     = document.getElementById('start-btn');
-    const progressFill = document.getElementById('progress-fill');
-    const progressText = document.getElementById('progress-text');
-    const cardA        = document.getElementById('card-a');
-    const cardB        = document.getElementById('card-b');
-    const skipBtn      = document.getElementById('skip-btn');
-    const undoBtn      = document.getElementById('undo-btn');
-    const resultsBody  = document.getElementById('results-body');
-    const restartBtn   = document.getElementById('restart-btn');
-    const redoBtn      = document.getElementById('redo-btn');
-
-    // ---- SETUP ----
-
-    function addItem(type, value, name) {
-      const id = Date.now() + Math.random();
-      items.push({ id, type, value, name: name || '' });
-      renderChips();
-      updateStartBtn();
-    }
-
-    function removeItem(idx) {
-      items.splice(idx, 1);
-      renderChips();
-      updateStartBtn();
-    }
-
-    function renderChips() {
-      itemsList.innerHTML = '';
-      items.forEach((item, i) => {
-        const chip = document.createElement('div');
-        chip.className = 'item-chip';
-        if (item.type === 'image') {
-          const img = document.createElement('img');
-          img.src = item.value;
-          chip.appendChild(img);
-        }
-        const span = document.createElement('span');
-        span.textContent = item.type === 'text' ? item.value : (item.name || `Image ${i + 1}`);
-        chip.appendChild(span);
-        const btn = document.createElement('button');
-        btn.textContent = '×';
-        btn.addEventListener('click', () => removeItem(i));
-        chip.appendChild(btn);
-        itemsList.appendChild(chip);
-      });
-    }
-
-    function updateStartBtn() {
-      startBtn.disabled = items.length < 2;
-    }
-
-    addTextBtn.addEventListener('click', () => {
-      const v = textInput.value.trim();
-      if (!v) return;
-      addItem('text', v);
-      textInput.value = '';
-      textInput.focus();
-    });
-
-    textInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') addTextBtn.click();
-    });
-
-    imageInput.addEventListener('change', () => {
-      const file = imageInput.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        addItem('image', e.target.result, file.name);
-        imageInput.value = '';
-      };
-      reader.readAsDataURL(file);
-    });
-
-    folderInput.addEventListener('change', () => {
-      const files = Array.from(folderInput.files).filter(f => f.type.startsWith('image/'));
-      files.forEach(file => {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          addItem('image', e.target.result, file.name);
-        };
-        reader.readAsDataURL(file);
-      });
-      folderInput.value = '';
-    });
-
-    // ---- COMPARE ----
-
-    function shuffle(arr) {
-      for (let i = arr.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[j]] = [arr[j], arr[i]];
-      }
-      return arr;
-    }
-
-    function generatePairs() {
-      pairs = [];
-      for (let i = 0; i < items.length; i++) {
-        for (let j = i + 1; j < items.length; j++) {
-          pairs.push([i, j]);
-        }
-      }
-      shuffle(pairs);
-    }
-
-    function startCompare() {
-      generatePairs();
-      currentPair = 0;
-      history.length = 0;
-      wins = {};
-      elo = {};
-      items.forEach((_, i) => { wins[i] = 0; elo[i] = START_ELO; });
-
-      setupPhase.style.display = 'none';
-      resultsPhase.style.display = 'none';
-      comparePhase.style.display = 'block';
-      showPair();
-    }
-
-    function showPair() {
-      if (currentPair >= pairs.length) {
-        showResults();
-        return;
-      }
-      const [a, b] = pairs[currentPair];
-      renderCard(cardA, items[a]);
-      renderCard(cardB, items[b]);
-      updateProgress();
-      undoBtn.disabled = history.length === 0;
-    }
-
-    function renderCard(card, item) {
-      card.innerHTML = '';
-      if (item.type === 'image') {
-        const img = document.createElement('img');
-        img.src = item.value;
-        card.appendChild(img);
-      }
-      const label = document.createElement('div');
-      label.className = 'label';
-      label.textContent = item.type === 'text' ? item.value : (item.name || '');
-      card.appendChild(label);
-    }
-
-    function updateProgress() {
-      const pct = pairs.length ? (currentPair / pairs.length) * 100 : 0;
-      progressFill.style.width = pct + '%';
-      progressText.textContent = `${currentPair} / ${pairs.length} comparisons`;
-    }
-
-    function expectedScore(ra, rb) {
-      return 1 / (1 + Math.pow(10, (rb - ra) / 400));
-    }
-
-    function recordResult(winnerIdx, loserIdx) {
-      if (winnerIdx !== null) {
-        wins[winnerIdx]++;
-        const ea = expectedScore(elo[winnerIdx], elo[loserIdx]);
-        const eb = 1 - ea;
-        elo[winnerIdx] += K * (1 - ea);
-        elo[loserIdx] += K * (0 - eb);
-      } else {
-        // tie — half credit
-        const [a, b] = pairs[currentPair];
-        const ea = expectedScore(elo[a], elo[b]);
-        const eb = 1 - ea;
-        elo[a] += K * (0.5 - ea);
-        elo[b] += K * (0.5 - eb);
-      }
-    }
-
-    function choose(winnerIdx) {
-      const [a, b] = pairs[currentPair];
-      const loserIdx = winnerIdx === a ? b : a;
-      history.push({ pair: currentPair, eloSnapshot: { ...elo }, winsSnapshot: { ...wins } });
-      recordResult(winnerIdx, loserIdx);
-      currentPair++;
-      showPair();
-    }
-
-    function chooseTie() {
-      history.push({ pair: currentPair, eloSnapshot: { ...elo }, winsSnapshot: { ...wins } });
-      recordResult(null, null);
-      currentPair++;
-      showPair();
-    }
-
-    function undo() {
-      if (!history.length) return;
-      const last = history.pop();
-      currentPair = last.pair;
-      Object.assign(elo, last.eloSnapshot);
-      Object.assign(wins, last.winsSnapshot);
-      showPair();
-    }
-
-    cardA.addEventListener('click', () => {
-      if (currentPair >= pairs.length) return;
-      choose(pairs[currentPair][0]);
-    });
-    cardB.addEventListener('click', () => {
-      if (currentPair >= pairs.length) return;
-      choose(pairs[currentPair][1]);
-    });
-    skipBtn.addEventListener('click', chooseTie);
-    undoBtn.addEventListener('click', undo);
-    startBtn.addEventListener('click', startCompare);
-
-    // ---- RESULTS ----
-
-    function showResults() {
-      comparePhase.style.display = 'none';
-      resultsPhase.style.display = 'block';
-
-      const ranked = items.map((item, i) => ({ item, idx: i, wins: wins[i], elo: elo[i] }));
-      ranked.sort((a, b) => b.elo - a.elo);
-
-      const maxElo = ranked[0]?.elo || 1;
-      const minElo = ranked[ranked.length - 1]?.elo || 0;
-      const range = maxElo - minElo || 1;
-
-      resultsBody.innerHTML = '';
-      ranked.forEach((entry, rank) => {
-        const tr = document.createElement('tr');
-
-        // rank
-        const tdRank = document.createElement('td');
-        const badge = document.createElement('span');
-        badge.className = 'rank-badge ' + (rank < 3 ? `rank-${rank + 1}` : 'rank-other');
-        badge.textContent = rank + 1;
-        tdRank.appendChild(badge);
-        tr.appendChild(tdRank);
-
-        // item
-        const tdItem = document.createElement('td');
-        const cell = document.createElement('div');
-        cell.className = 'item-cell';
-        if (entry.item.type === 'image') {
-          const img = document.createElement('img');
-          img.src = entry.item.value;
-          cell.appendChild(img);
-        }
-        const name = document.createElement('span');
-        name.textContent = entry.item.type === 'text' ? entry.item.value : (entry.item.name || `Image ${entry.idx + 1}`);
-        cell.appendChild(name);
-        tdItem.appendChild(cell);
-        tr.appendChild(tdItem);
-
-        // wins
-        const tdWins = document.createElement('td');
-        tdWins.textContent = entry.wins;
-        tr.appendChild(tdWins);
-
-        // score bar
-        const tdScore = document.createElement('td');
-        const wrap = document.createElement('div');
-        wrap.className = 'score-bar-wrap';
-        const fill = document.createElement('div');
-        fill.className = 'score-bar-fill';
-        const pct = ((entry.elo - minElo) / range) * 100;
-        fill.style.width = Math.max(pct, 4) + '%';
-        wrap.appendChild(fill);
-        tdScore.appendChild(wrap);
-        tr.appendChild(tdScore);
-
-        resultsBody.appendChild(tr);
-      });
-    }
-
-    restartBtn.addEventListener('click', () => {
-      items.length = 0;
-      resultsPhase.style.display = 'none';
-      setupPhase.style.display = 'block';
-      renderChips();
-      updateStartBtn();
-    });
-
-    redoBtn.addEventListener('click', () => {
-      resultsPhase.style.display = 'none';
-      startCompare();
-    });
-  </script>
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/taskmaster-data.js"></script>
+  <script src="js/supabase.js"></script>
+  <script src="js/app.js"></script>
 </body>
 </html>
